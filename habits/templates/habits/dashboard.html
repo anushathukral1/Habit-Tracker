@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Habit Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 18px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #4caf50;
+            transition: width 0.3s ease;
+        }
+
+        .habit {
+            padding: 15px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .completed {
+            color: green;
+            font-weight: bold;
+        }
+
+        .not-completed {
+            color: red;
+        }
+
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #43a047;
+        }
+
+        .empty {
+            text-align: center;
+            color: #888;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>My Habit Dashboard</h1>
+
+    <div class="stats">
+        Completed Today: <strong>{{ completed }}</strong> / <strong>{{ total }}</strong>
+        <br>
+        <strong>{{ percentage }}%</strong> complete
+
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ percentage }}%;"></div>
+        </div>
+    </div>
+
+    {% for habit in habits %}
+        <div class="habit">
+            <div>
+                <strong>{{ habit.name }}</strong>
+                <br>
+                🔥 {{ habit.streak }} day streak
+            </div>
+
+            <div>
+            <form method="post" action="{% url 'mark-complete' habit.id %}" style="display:inline;">
+                {% csrf_token %}
+
+                {% if habit.completed_today %}
+                    <button type="submit" style="background-color:#e53935;">
+                        ✔ Completed (Undo)
+                    </button>
+                {% else %}
+                    <button type="submit">
+                        Mark Complete
+                    </button>
+                {% endif %}
+            </form>
+            </div>
+        </div>
+    {% empty %}
+        <p class="empty">No habits yet. Add one to get started!</p>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>
