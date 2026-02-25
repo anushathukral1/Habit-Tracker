@@ -14,10 +14,42 @@ from rest_framework.decorators import action
 from .models import HabitLog, Habit
 from .serializers import HabitSerializer
 
+from django.contrib.auth.models import User
+from django.db.models import Count
+from django.shortcuts import render
+from django.contrib.admin.views.decorators import staff_member_required
 
-# -----------------------
-# Analytics API View
-# -----------------------
+
+
+@staff_member_required
+def admin_dashboard(request):
+
+    total_users = User.objects.count()
+    total_habits = Habit.objects.count()
+    total_logs = HabitLog.objects.count()
+
+    top_users = (
+        User.objects
+        .annotate(total_logs=Count("habits__logs"))
+        .order_by("-total_logs")[:5]
+    )
+
+    top_habits = (
+        Habit.objects
+        .annotate(total_logs=Count("logs"))
+        .order_by("-total_logs")[:5]
+    )
+
+    return render(request, "habits/admin_dashboard.html", {
+        "total_users": total_users,
+        "total_habits": total_habits,
+        "total_logs": total_logs,
+        "top_users": top_users,
+        "top_habits": top_habits,
+    })
+
+
+
 class HabitAnalyticsView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -48,9 +80,7 @@ class HabitAnalyticsView(APIView):
         })
 
 
-# -----------------------
-# Habits API ViewSet
-# -----------------------
+
 class HabitViewSet(viewsets.ModelViewSet):
     serializer_class = HabitSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -73,9 +103,7 @@ class HabitViewSet(viewsets.ModelViewSet):
         return Response({"status": "habit logged"})
 
 
-# -----------------------
-# Dashboard View (HTML)
-# -----------------------
+
 from datetime import timedelta
 
 @login_required
@@ -96,7 +124,6 @@ def dashboard_view(request):
         if completed_today:
             completed_count += 1
 
-        # 🔥 Calculate current streak
         streak = 0
         day = today
 
@@ -139,10 +166,8 @@ def mark_complete(request, habit_id):
     ).first()
 
     if log:
-        # If already completed → remove it (uncomplete)
         log.delete()
     else:
-        # If not completed → create it
         HabitLog.objects.create(
             habit=habit,
             completed_at=today

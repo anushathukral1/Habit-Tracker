@@ -21,8 +21,13 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+from habits.views import admin_dashboard
+
 urlpatterns = [
+    # Django admin
     path('admin/', admin.site.urls),
+    
+    path("admin-dashboard/", admin_dashboard, name="admin-dashboard"),
 
     # JWT Auth
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
