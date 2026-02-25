@@ -185,6 +185,16 @@ This project demonstrates:
 
 ---
 
+# 🧩 Future Improvements
+- Streak tracking
+- Graph-based analytics
+- Email reminders
+- Pagination
+- PostgreSQL production deployment
+- Docker containerization
+
+---
+
 # 🚀 Local Development
 
 ```bash
@@ -197,15 +207,3 @@ User Dashboard:
 http://127.0.0.1:8000/api/v1/dashboard/
 Admin Analytics Dashboard:
 http://127.0.0.1:8000/api/v1/admin-dashboard/
-🧩 Future Improvements
-Streak tracking
-
-Graph-based analytics
-
-Email reminders
-
-Pagination
-
-PostgreSQL production deployment
-
-Docker containerization
